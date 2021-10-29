@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import datetime
-from sqlalchemy.orm import backref
+from sqlalchemy.orm import backref, relationship
+from sqlalchemy import ForeignKey
 from werkzeug.security import generate_password_hash as genph
 from werkzeug.security import check_password_hash as checkph
 
@@ -11,7 +12,7 @@ db = SQLAlchemy(app)
 
 class Habitacion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    hotel_id = db.Column(db.Integer, db.ForeignKey('hotel.id'))
+    hotel_id = db.Column(db.Integer, db.ForeignKey('habitacion.idhotel.id'))
     piso = db.Column(db.Integer)
     precio = db.Column(db.Integer)
     descripcion = db.Column(db.String)
@@ -40,7 +41,8 @@ class Reserva(db.Model):
     fechaInicio=db.Column(db.DateTime, default=datetime.datetime.now())
     cantidadDias=db.Column(db.Integer)
     usuario_id=db.Column(db.Integer)
-    habitacion_id=db.Column(db.Integer)
+    habitacion_id=db.Column(db.Integer, ForeignKey('habitacion.id'))
+    habitacion = relationship(Habitacion, backref=backref('reserva', uselist=True))
 
 class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -210,7 +212,10 @@ def reservar():
 
 @app.route('/reserves')
 def reserves():
+    # rooms = Habitacion.query.join(Hotel, Habitacion.hotel_id == Hotel.id).all()
     reserves = Reserva.query.filter_by(usuario_id=session['usuario_id']).all()
+    # reserves = Reserva.query.join(Habitacion, Reserva.habitacion_id == Habitacion.id).all()
+    
     return render_template('reserves.html', reserves=reserves)
 
 if __name__ == '__main__':

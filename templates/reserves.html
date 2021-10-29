@@ -6,19 +6,21 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>Hotel</th>
                 <th>Date</th>
                 <th>Number days</th>
-                <th>Hotel</th>
-                <th>Numer room</th>
+                <th>Number room</th>
+                <th>Price</th>
             </tr>
         </thead>
         <tbody>
             {% for reserve in reserves %}
                 <tr>
+                    <td>Hotel court yard</td>
                     <td>{{reserve.fechaInicio}}</td>
                     <td>{{reserve.cantidadDias}}</td>
-                    <td>Hotel court yard</td>
-                    <td>{{reserve.habitacion_id}}</td>
+                    <td>{{reserve.habitacion.numero}}</td>
+                    <td>{{reserve.habitacion.precio * reserve.cantidadDias}}</td>
                 </tr>
             {% endfor %}
         </tbody>
