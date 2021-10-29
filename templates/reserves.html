@@ -1,0 +1,26 @@
+{% extends './layout.html' %}
+{% block title %}Reserves{% endblock %}
+{% block classreserves %}active{% endblock %}
+
+{% block body %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Number days</th>
+                <th>Hotel</th>
+                <th>Numer room</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserve in reserves %}
+                <tr>
+                    <td>{{reserve.fechaInicio}}</td>
+                    <td>{{reserve.cantidadDias}}</td>
+                    <td>Hotel court yard</td>
+                    <td>{{reserve.habitacion_id}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{%endblock%}

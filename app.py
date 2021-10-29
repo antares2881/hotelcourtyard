@@ -34,6 +34,14 @@ class Hotel(db.Model):
     telefono = db.Column(db.Integer, nullable=False)
     usuario_id = db.Column(db.Integer)
 
+class Reserva(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    fechaRegistro=db.Column(db.DateTime, default=datetime.datetime.now())
+    fechaInicio=db.Column(db.DateTime, default=datetime.datetime.now())
+    cantidadDias=db.Column(db.Integer)
+    usuario_id=db.Column(db.Integer)
+    habitacion_id=db.Column(db.Integer)
+
 class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
@@ -61,9 +69,12 @@ def register():
             flash('Hay campos vacios!!', 'error')
             return redirect(url_for('register'))
         else:
-            user = Usuario(name=request.form['name'], lastname=request.form['lastname'], loginUserName=request.form['username'], password=genph(request.form['password']), loginstatus=0 )
+            user = Usuario(name=request.form['name'], lastname=request.form['lastname'], loginUserName=request.form['username'], password=genph(request.form['password']), loginstatus=0 , role_id=3)
             db.session.add(user) 
             db.session.commit()
+            session["username"] = user.loginUserName
+            session["role"] = user.role_id
+            session["usuario_id"] = user.id
             return redirect(url_for('home'))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -79,6 +90,7 @@ def login():
             db.session.commit()
             session["username"] = username
             session["role"] = user.role_id
+            session["usuario_id"] = user.id
             return render_template('index.html')
         else:
             flash('Las credenciales no existen, verifique', 'error')
@@ -97,17 +109,17 @@ def createroom():
 
 @app.route('/rooms')
 def getrooms():
-    rooms = Habitacion.query.all()
+    rooms = Habitacion.query.filter_by(estado='disponible').all()
     # rooms = Habitacion.query.join(Hotel, Habitacion.hotel_id == Hotel.id).all()
     return render_template('rooms.html', rooms=rooms)
 
 @app.route('/create-room', methods=['POST'])
 def saveroom():
-    if not request.form['hotel_id'] or not request.form['piso'] or not request.form['numero'] or not request.form['capacidad'] or not request.form['descripcion'] or not request.form['estado'] or not request.form['id_tarjeta_llave']:
+    if not request.form['hotel_id'] or not request.form['piso'] or not request.form['numero'] or not request.form['capacidad'] or not request.form['precio'] or not request.form['descripcion'] or not request.form['estado'] or not request.form['id_tarjeta_llave']:
         flash('Hay campos vacios!!', 'error')
         return redirect(url_for('createroom'))
     else:
-        room = Habitacion(hotel_id=request.form['hotel_id'], piso=request.form['piso'], numero=request.form['numero'], capacidad=request.form['capacidad'], descripcion=request.form['descripcion'], estado=request.form['estado'], id_tarjeta_llave=request.form['id_tarjeta_llave'] )
+        room = Habitacion(hotel_id=request.form['hotel_id'], piso=request.form['piso'], numero=request.form['numero'], capacidad=request.form['capacidad'], precio=request.form['precio'], descripcion=request.form['descripcion'], estado=request.form['estado'], id_tarjeta_llave=request.form['id_tarjeta_llave'] )
         db.session.add(room) 
         db.session.commit()
         flash('Room save success!!', 'success')
@@ -167,6 +179,26 @@ def deleteroom():
     db.session.commit()
     flash('Room delete success!!', 'success')
     return redirect(url_for('deleterooms'))
+
+@app.route('/reserve', methods=['POST'])
+def reservar():
+    if not request.form['fecha'] or not request.form['dias']:
+        flash('Hay campos vacios!!', 'error')
+        return redirect(url_for('getrooms'))
+    else:
+        reserve = Reserva(cantidadDias=request.form['dias'], usuario_id=session['usuario_id'], habitacion_id=request.form['habitacion_id'])
+        db.session.add(reserve) 
+        habitacion = Habitacion.query.get(reserve.habitacion_id)
+        habitacion.estado = 'ocupada'
+        db.session.add(habitacion) 
+        db.session.commit()
+        flash('Reserve save success!!', 'success')
+        return redirect(url_for('getrooms'))
+
+@app.route('/reserves')
+def reserves():
+    reserves = Reserva.query.filter_by(usuario_id=session['usuario_id']).all()
+    return render_template('reserves.html', reserves=reserves)
 
 if __name__ == '__main__':
     app.secret_key = 'super secret key'

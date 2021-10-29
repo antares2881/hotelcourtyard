@@ -36,9 +36,9 @@ function buscarHabitacion(){
     
                     <label for="" class="form-label mt-2">State</label>
                     <select name="estado" id="" class="form-select">
-                        <option value="disponible" ${(data.estado === 'disponible'?'select':'')}>Available</option>
-                        <option value="ocupada" ${(data.estado === 'ocupada'?'select':'')}>Not available</option>
-                        <option value="mantenimiento" ${(data.estado === 'mantenimiento'?'select':'')}>Maintenance</option>
+                        <option value="disponible" ${(data.estado === 'disponible'?'selected':'')}>Available</option>
+                        <option value="ocupada" ${(data.estado === 'ocupada'?'selected':'')}>Not available</option>
+                        <option value="mantenimiento" ${(data.estado === 'mantenimiento'?'selected':'')}>Maintenance</option>
                     </select>
     
                     <label for="" class="form-label mt-2">Door key card ID</label>
