@@ -56,9 +56,22 @@ class Usuario(db.Model):
     def verif_clave(self, password):
         return checkph(self.password, password)
 
+@app.route("/index", methods=["GET"])
 @app.route('/')
 def home():    
     return render_template('index.html')
+
+@app.route("/acerca/")
+def acerca():
+    return render_template("acerca.html", methods=["GET"])
+
+@app.route("/contacto/")
+def contacto():
+    return render_template("contacto.html", methods=["GET"])
+
+@app.route("/servicios/")
+def servicios():
+    return render_template("servicios.html", methods=["GET"])
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
