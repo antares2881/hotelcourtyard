@@ -33,16 +33,19 @@
                             <span class="visually-hidden">(current)</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {%block classrooms%}{% endblock %}" href="/rooms">Rooms</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {%block classreserves%}{% endblock %}" href="/reserves">Reserves</a>
-                    </li>
+                    {% if session['username']%}
+                        <li class="nav-item">
+                            <a class="nav-link {%block classrooms%}{% endblock %}" href="/rooms">Rooms</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {%block classreserves%}{% endblock %}" href="/reserves">Reserves</a>
+                        </li>
+                    {%endif%}
                 </ul>
                 <div class="d-flex">
                     {% if session['username'] %}
                         <ul class="navbar-nav me-auto">
+                            
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{session['username']}}</a>
                                 <div class="dropdown-menu">
@@ -54,11 +57,11 @@
                             </li>
                         </ul>                        
                     {% else %}
-                    <a class="btn btn-secondary my-2 my-sm-0 mx-1" href="#rooms">Reserva</a>
-                    <a class="btn btn-secondary my-2 my-sm-0 mx-1" href="#about">Sobre</a>
-                    <a class="btn btn-secondary my-2 my-sm-0 mx-1" href="/servicios">Servicios</a>
-                    <a class="btn btn-secondary my-2 my-sm-0 mx-1" href="/acerca">Acerca</a>
-                    <a class="btn btn-secondary my-2 my-sm-0 mx-1" href="/contacto">Contacto</a>
+                        <a class="btn btn-secondary my-2 my-sm-0 mx-1" href="#rooms">Reserva</a>
+                        <a class="btn btn-secondary my-2 my-sm-0 mx-1" href="#about">Sobre</a>
+                        <a class="btn btn-secondary my-2 my-sm-0 mx-1" href="/servicios">Servicios</a>
+                        <a class="btn btn-secondary my-2 my-sm-0 mx-1" href="/acerca">Acerca</a>
+                        <a class="btn btn-secondary my-2 my-sm-0 mx-1" href="/contacto">Contacto</a>
                     
                         <a class="btn btn-secondary my-2 my-sm-0 mx-1" href="/login">Iniciar sesion</a>
                         <a class="btn btn-primary my-2 my-sm-0" href="/register">Registrarse</a>
